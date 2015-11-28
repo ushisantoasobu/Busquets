@@ -12,8 +12,8 @@ class Busquets {
 
     private let capacity = 10 // TODO: be mutable in future!!
 
-//    private var list :Array<Dictionary<String, AnyObject>> = []
-    private var caches = Dictionary<String, AnyObject>()
+    private var caches :Array<Cache> = []
+//    private var caches = Dictionary<String, AnyObject>()
 
     // MARK: - singleton
 
@@ -26,14 +26,47 @@ class Busquets {
 
     // MARK: - private
 
-    private func check() {
+    private func getIndex(key :String) -> Int? {
+        for (index, cache) in self.caches.enumerate() {
+            if cache.key == key {
+                return index
+            }
+        }
+        return nil
+    }
 
+    private func updateCacheIndex(key :String) {
+        let index = self.getIndex(key)
+        if index == nil {
+            return
+        }
+        let cache = self.caches[index!]
+        self.caches.removeAtIndex(index!)
+        self.caches.insert(cache, atIndex: 0)
+    }
+
+    private func updateCacheIndex(index :Int) {
+        //
     }
 
     // MARK: - public
 
     func get(key :String) -> AnyObject? {
-        return self.caches[key]
+        return self.get(key, update: true)
+    }
+
+    func get(key :String, update :Bool) -> AnyObject? {
+        var caches :Array<Cache>? = nil
+        caches = self.caches.filter { (cache :Cache) -> Bool in
+            key == cache.key
+        }
+        if caches != nil && caches!.count > 0 {
+            if update {
+                self.updateCacheIndex(caches![0].key)
+            }
+            return caches![0].value
+        }
+        return nil
     }
 
     func set(key :String, value :AnyObject) -> Bool {
@@ -44,19 +77,23 @@ class Busquets {
 
         // validate existing
         if self.hasValue(key) == true {
+            self.updateCacheIndex(key)
             return true
         }
 
+        let cache = Cache(key: key, value: value)
+
         if self.caches.count < 10 {
-            self.caches.updateValue(value, forKey: key)
+            self.caches.insert(cache, atIndex: 0)
         } else {
-            //
+            self.caches.removeLast()
+            self.caches.insert(cache, atIndex: 0)
         }
         return true
     }
 
     func hasValue(key :String) -> Bool {
-        return (self.caches[key] != nil)
+        return (self.get(key, update :false) != nil)
     }
 
     func getCapacity() -> Int {
@@ -69,25 +106,40 @@ class Busquets {
 
     func getKeys() -> Array<String> {
         var keys = Array<String>()
-        self.caches.map { (key, value) -> Void in
-            keys.append(key)
+        keys = self.caches.map { (cache :Cache) -> String in
+            return cache.key
         }
         return keys
     }
 
     func getValues() -> Array<AnyObject> {
         var values = Array<AnyObject>()
-        self.caches.map { (key, value) -> Void in
-            values.append(value)
+        values = self.caches.map { (cache :Cache) -> AnyObject in
+            return cache.value
         }
         return values
     }
 
     func remove(key :String) {
-        self.caches.removeValueForKey(key)
+        self.caches.enumerate().map { (index :Int, cache :Cache) -> Void in
+            if key == cache.key {
+                self.caches.removeAtIndex(index)
+                return
+            }
+        }
     }
 
     func removeAll() {
         self.caches.removeAll(keepCapacity: true) // TODO: keepCapacity
+    }
+}
+
+class Cache {
+    var key :String = ""
+    var value :AnyObject = ""
+
+    init(key :String, value :AnyObject) {
+        self.key = key
+        self.value = value
     }
 }
