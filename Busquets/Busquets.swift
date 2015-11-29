@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Busquets {
+public class Busquets {
 
     // MARK: - variables
 
@@ -21,7 +21,7 @@ class Busquets {
 
     // MARK: - singleton
 
-    class var sharedInstance : Busquets {
+    public class var sharedInstance : Busquets {
         struct Static {
             static let instance : Busquets = Busquets()
         }
@@ -55,11 +55,11 @@ class Busquets {
 
     // MARK: - public
 
-    func get(key :String) -> AnyObject? {
+    public func get(key :String) -> AnyObject? {
         return self.get(key, update: true)
     }
 
-    func get(key :String, update :Bool) -> AnyObject? {
+    public func get(key :String, update :Bool) -> AnyObject? {
         var caches :Array<Cache>? = nil
         caches = self.caches.filter { (cache :Cache) -> Bool in
             key == cache.key
@@ -68,12 +68,13 @@ class Busquets {
             if update {
                 self.updateCacheIndex(caches![0].key)
             }
+            print("cache hit!!!")
             return caches![0].value
         }
         return nil
     }
 
-    func set(key :String, value :AnyObject) -> Bool {
+    public func set(key :String, value :AnyObject) -> Bool {
         // validate key
         if key.characters.count == 0 {
             return false
@@ -98,19 +99,19 @@ class Busquets {
         return true
     }
 
-    func hasValue(key :String) -> Bool {
+    public func hasValue(key :String) -> Bool {
         return (self.get(key, update :false) != nil)
     }
 
-    func getCapacity() -> Int {
+    public func getCapacity() -> Int {
         return self.capacity
     }
 
-    func getCount() -> Int {
+    public func getCount() -> Int {
         return self.caches.count
     }
 
-    func getKeys() -> Array<String> {
+    public func getKeys() -> Array<String> {
         var keys = Array<String>()
         keys = self.caches.map { (cache :Cache) -> String in
             return cache.key
@@ -118,7 +119,7 @@ class Busquets {
         return keys
     }
 
-    func getValues() -> Array<AnyObject> {
+    public func getValues() -> Array<AnyObject> {
         var values = Array<AnyObject>()
         values = self.caches.map { (cache :Cache) -> AnyObject in
             return cache.value
@@ -126,7 +127,7 @@ class Busquets {
         return values
     }
 
-    func remove(key :String) {
+    public func remove(key :String) {
         self.caches.enumerate().map { (index :Int, cache :Cache) -> Void in
             if key == cache.key {
                 self.caches.removeAtIndex(index)
@@ -135,7 +136,7 @@ class Busquets {
         }
     }
 
-    func removeAll() {
+    public func removeAll() {
         self.caches.removeAll(keepCapacity: true) // TODO: keepCapacity
     }
 }
