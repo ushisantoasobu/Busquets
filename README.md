@@ -7,14 +7,6 @@
 
 Simple Swift in-memory LRU cache
 
-## Usage
-
-To run the example project, clone the repo, and run `pod install` from the Example directory first.
-
-```
-// TODO...
-```
-
 ## Install
 
 ### CocoaPods
@@ -26,7 +18,15 @@ it, simply add the following line to your Podfile:
 pod "Busquets"
 ```
 
-## Api
+## Usage
+
+To run the example project, clone the repo, and run `pod install` from the Example directory first.
+
+```Swift
+let cache = Busquets<String>()
+cache.set("nickname", value: "ushisantoasobu")
+print(cache.get("nickname"))
+```
 
 ### get
 
