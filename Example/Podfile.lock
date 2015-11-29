@@ -1,0 +1,14 @@
+PODS:
+  - Busquets (0.1.0)
+
+DEPENDENCIES:
+  - Busquets (from `../`)
+
+EXTERNAL SOURCES:
+  Busquets:
+    :path: ../
+
+SPEC CHECKSUMS:
+  Busquets: 744d59731c8aaaa959d522c4561260ad82f8f8f9
+
+COCOAPODS: 0.38.2

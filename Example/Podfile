@@ -2,8 +2,8 @@ source 'https://github.com/CocoaPods/Specs.git'
 use_frameworks!
 
 
-target 'Busquets_Tests', :exclusive => true do
+target 'BusquetsSample', :exclusive => true do
   pod "Busquets", :path => "../"
-
   
 end
+
