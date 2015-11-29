@@ -55,6 +55,10 @@ public class Busquets<T> {
 
     // MARK: - public
 
+    public init() {
+        //
+    }
+
     public func get(key :String) -> T? {
         return self.get(key, update: true)
     }

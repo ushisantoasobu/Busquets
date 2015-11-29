@@ -14,6 +14,7 @@
 		CD112C651C0AC3D400200049 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD112C631C0AC3D400200049 /* LaunchScreen.storyboard */; };
 		CD112C6E1C0AF72000200049 /* ImageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD112C6C1C0AF72000200049 /* ImageTableViewCell.swift */; settings = {ASSET_TAGS = (); }; };
 		CD112C6F1C0AF72000200049 /* ImageTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD112C6D1C0AF72000200049 /* ImageTableViewCell.xib */; settings = {ASSET_TAGS = (); }; };
+		CD6A591B1C0B50BD00346944 /* globals.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD6A591A1C0B50BD00346944 /* globals.swift */; settings = {ASSET_TAGS = (); }; };
 		E60024A16A37F6843DFCFF2D /* Pods_BusquetsSample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BDFAA40DD73B37B44734C01D /* Pods_BusquetsSample.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 /* End PBXBuildFile section */
 
@@ -30,6 +31,7 @@
 		CD112C661C0AC3D400200049 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CD112C6C1C0AF72000200049 /* ImageTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageTableViewCell.swift; sourceTree = "<group>"; };
 		CD112C6D1C0AF72000200049 /* ImageTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ImageTableViewCell.xib; sourceTree = "<group>"; };
+		CD6A591A1C0B50BD00346944 /* globals.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = globals.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,6 +92,7 @@
 				CD112C611C0AC3D400200049 /* Assets.xcassets */,
 				CD112C631C0AC3D400200049 /* LaunchScreen.storyboard */,
 				CD112C661C0AC3D400200049 /* Info.plist */,
+				CD6A591A1C0B50BD00346944 /* globals.swift */,
 			);
 			path = BusquetsSample;
 			sourceTree = "<group>";
@@ -216,6 +219,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CD6A591B1C0B50BD00346944 /* globals.swift in Sources */,
 				CD112C6E1C0AF72000200049 /* ImageTableViewCell.swift in Sources */,
 				CD112C5D1C0AC3D400200049 /* ViewController.swift in Sources */,
 				CD112C5B1C0AC3D400200049 /* AppDelegate.swift in Sources */,

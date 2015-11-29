@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Busquets
 
 class ImageTableViewCell: UITableViewCell {
 
@@ -24,7 +23,7 @@ class ImageTableViewCell: UITableViewCell {
     func setCustomImageUrlString(urlString :String) {
 
         // use cacha if exists
-        let cache = Busquets.sharedInstance.get(urlString) as? UIImage
+        let cache = imageCache.get(urlString)
         if cache != nil {
             self.customImageView.image = cache
             return
@@ -36,7 +35,7 @@ class ImageTableViewCell: UITableViewCell {
                 let data = NSData(contentsOfURL: existUrl)
                 if let existData = data {
                     let image = UIImage(data: existData)!
-                    Busquets.sharedInstance.set(urlString, value: image)
+                    imageCache.set(urlString, value: image)
                     dispatch_async_main {
                         self.customImageView.image = image
                     }
