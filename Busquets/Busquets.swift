@@ -6,6 +6,8 @@
 //  Copyright © 2015年 moguraproject. All rights reserved.
 //
 
+import Foundation
+
 class Busquets {
 
     // MARK: - variables
@@ -14,6 +16,8 @@ class Busquets {
 
     private var caches :Array<Cache> = []
 //    private var caches = Dictionary<String, AnyObject>()
+
+    private let lock = NSLock()
 
     // MARK: - singleton
 
@@ -75,20 +79,22 @@ class Busquets {
             return false
         }
 
+        self.lock.lock()
+
         // validate existing
         if self.hasValue(key) == true {
             self.updateCacheIndex(key)
+            self.lock.unlock()
             return true
         }
 
         let cache = Cache(key: key, value: value)
 
-        if self.caches.count < 10 {
-            self.caches.insert(cache, atIndex: 0)
-        } else {
+        if self.caches.count == 10 {
             self.caches.removeLast()
-            self.caches.insert(cache, atIndex: 0)
         }
+        self.caches.insert(cache, atIndex: 0)
+        self.lock.unlock()
         return true
     }
 
