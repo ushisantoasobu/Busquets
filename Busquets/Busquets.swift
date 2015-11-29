@@ -59,6 +59,10 @@ public class Busquets {
         return self.get(key, update: true)
     }
 
+    public func get<T>(key :String, _ type :T.Type) -> T? {
+        return self.get(key, update: true) as? T
+    }
+
     public func get(key :String, update :Bool) -> AnyObject? {
         var caches :Array<Cache>? = nil
         caches = self.caches.filter { (cache :Cache) -> Bool in

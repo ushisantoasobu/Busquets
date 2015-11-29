@@ -31,6 +31,10 @@ class BusquetsTests: XCTestCase {
         if let name :String = nickname {
             XCTAssert(name == "ushisantoasobu", "value from get()")
         }
+
+        Busquets.sharedInstance.set("age", value: 31)
+        XCTAssert(Busquets.sharedInstance.get("age", Int.self) == 31, "value from get()")
+        XCTAssert(Busquets.sharedInstance.get("age", String.self) == nil, "value from get()")
     }
 
     func testSet() {
