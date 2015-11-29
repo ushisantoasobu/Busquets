@@ -13,9 +13,6 @@ class BusquetsTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-
-        // do refresh
-        Busquets.sharedInstance.removeAll()
     }
     
     override func tearDown() {
@@ -26,64 +23,92 @@ class BusquetsTests: XCTestCase {
     // TODO: do test for more Types like UIImage
 
     func testGet() {
-        Busquets.sharedInstance.set("nickname", value: "ushisantoasobu")
-        let nickname = Busquets.sharedInstance.get("nickname") as? String
-        if let name :String = nickname {
-            XCTAssert(name == "ushisantoasobu", "value from get()")
-        }
+        // String
+        let cache = Busquets<String>()
+        cache.set("nickname", value: "ushisantoasobu")
+        XCTAssert(cache.get("nickname") == "ushisantoasobu", "set func works fine")
+        XCTAssert(cache.get("age") == nil, "get nil if not exists")
 
-        Busquets.sharedInstance.set("age", value: 31)
-        XCTAssert(Busquets.sharedInstance.get("age", Int.self) == 31, "value from get()")
-        XCTAssert(Busquets.sharedInstance.get("age", String.self) == nil, "value from get()")
+        // Int
+
+        // Bool
+
     }
 
     func testSet() {
-        XCTAssert(Busquets.sharedInstance.set("", value: "hoge") == false, "xxxxxxxxxxx")
-        XCTAssert(Busquets.sharedInstance.set("hoge", value: "Xavi") == true, "xxxxxxxxxxx")
-        XCTAssert(Busquets.sharedInstance.set("hoge", value: "Iniesta") == true, "xxxxxxxxxxx")
+        let cache = Busquets<String>()
+        XCTAssert(cache.set("", value: "hoge") == false, "0 chars key is invalid")
+        XCTAssert(cache.set("hoge", value: "hoge") == true, "set func works fine")
     }
 
     func testHasValue() {
-        Busquets.sharedInstance.set("hoge", value: "hoge")
-        XCTAssert(Busquets.sharedInstance.hasValue("hoge") == true, "xxxxxxxxx")
-        XCTAssert(Busquets.sharedInstance.hasValue("fuga") == false, "xxxxxxxxx")
+        let cache = Busquets<String>()
+        cache.set("hoge", value: "hoge")
+        XCTAssert(cache.hasValue("hoge") == true, "hasValue func works fine")
+        XCTAssert(cache.hasValue("fuga") == false, "get false if not exists")
     }
 
     func testGetCapacity() {
-        XCTAssert(Busquets.sharedInstance.getCapacity() == 10, "xxxxxxxxx")
+        let cache = Busquets<String>()
+        XCTAssert(cache.getCapacity() == 10, "getCapacity func works fine")
     }
 
     func testGetKeys() {
-        Busquets.sharedInstance.set("hoge", value: 100)
-        Busquets.sharedInstance.set("fuga", value: 200000)
-//        XCTAssert(Busquets.sharedInstance.getKeys() == ["hoge", "fuga"], "xxxxxxxxx")
+        let cache = Busquets<Int>()
+        cache.set("hoge", value: 100)
+        cache.set("fuga", value: 200000)
+        XCTAssert(cache.getKeys() == ["fuga", "hoge"], "getKeys func works fine")
     }
 
     func testGetValues() {
-        Busquets.sharedInstance.set("hoge", value: 100)
-        Busquets.sharedInstance.set("fuga", value: 200000)
-        // TODO:
-//        XCTAssert(Busquets.sharedInstance.getValues() == ([100, 200000] as Array<AnyObject>), "xxxxxxxxx")
+        let cache = Busquets<Int>()
+        cache.set("hoge", value: 100)
+        cache.set("fuga", value: 200000)
+        XCTAssert(cache.getValues() == [200000, 100], "getValues func works fine")
     }
 
     func testRemove() {
-        Busquets.sharedInstance.set("hoge", value: 100)
-        Busquets.sharedInstance.set("fuga", value: 200)
-        Busquets.sharedInstance.remove("hoge")
-        XCTAssert(Busquets.sharedInstance.hasValue("hoge") == false, "xxxxxxxxx")
-        XCTAssert(Busquets.sharedInstance.hasValue("fuga") == true, "xxxxxxxxx")
-        XCTAssert(Busquets.sharedInstance.getCount() == 1, "xxxxxxxxx")
+        let cache = Busquets<Int>()
+        cache.set("hoge", value: 100)
+        cache.set("fuga", value: 200)
+        cache.remove("hoge")
+        XCTAssert(cache.hasValue("hoge") == false, "get false after removed")
+        XCTAssert(cache.hasValue("fuga") == true, "get true without removed")
+        XCTAssert(cache.getCount() == 1, "get correct cache count after removed")
     }
 
     func testRemoveAll() {
-        Busquets.sharedInstance.set("hoge", value: 100)
-        Busquets.sharedInstance.set("fuga", value: 200)
-        Busquets.sharedInstance.removeAll()
-        XCTAssert(Busquets.sharedInstance.hasValue("hoge") == false, "xxxxxxxxx")
-        XCTAssert(Busquets.sharedInstance.hasValue("fuga") == false, "xxxxxxxxx")
-        XCTAssert(Busquets.sharedInstance.getCount() == 0, "xxxxxxxxx")
+        let cache = Busquets<Int>()
+        cache.set("hoge", value: 100)
+        cache.set("fuga", value: 200)
+        cache.removeAll()
+        XCTAssert(cache.hasValue("hoge") == false, "get false after all removed")
+        XCTAssert(cache.hasValue("fuga") == false, "get false after all removed")
+        XCTAssert(cache.getCount() == 0, "get 0 count after all removed")
     }
-    
+
+
+    func testLruAlgorithm() {
+        let cache = Busquets<String>()
+        ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"].map { (char) -> Void in
+            cache.set(char, value: char)
+        }
+        ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"].map { (char) -> Void in
+            print(cache.get(char))
+        }
+
+        cache.set("hoge", value: "hoge")
+        XCTAssert(cache.hasValue("a") == false, "get false for removed cache")
+        XCTAssert(cache.hasValue("hoge") == true, "get true for cache")
+
+        XCTAssert(cache.hasValue("c") == true, "get true for cache")
+        print(cache.get("b"))
+        cache.set("fuga", value: "fuga")
+        XCTAssert(cache.hasValue("c") == false, "get false for removed cache")
+        XCTAssert(cache.get("fuga") == "fuga", "get cache")
+        
+    }
+
     func testPerformanceExample() {
         // This is an example of a performance test case.
         self.measureBlock {
@@ -91,28 +116,4 @@ class BusquetsTests: XCTestCase {
         }
     }
 
-    func testLruAlgorithm() {
-        ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"].map { (char) -> Void in
-            Busquets.sharedInstance.set(char, value: char)
-        }
-        ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"].map { (char) -> Void in
-            print(Busquets.sharedInstance.get(char))
-        }
-
-        Busquets.sharedInstance.set("hoge", value: 100)
-        XCTAssert(Busquets.sharedInstance.hasValue("a") == false, "xxxxxxxxx")
-        XCTAssert(Busquets.sharedInstance.hasValue("hoge") == true, "xxxxxxxxx")
-
-        XCTAssert(Busquets.sharedInstance.hasValue("c") == true, "xxxxxxxxx")
-        print(Busquets.sharedInstance.get("b"))
-        Busquets.sharedInstance.set("fuga", value: 200)
-        XCTAssert(Busquets.sharedInstance.hasValue("c") == false, "xxxxxxxxx")
-        XCTAssert(Busquets.sharedInstance.get("fuga") as! Int == 200, "xxxxxxxxx")
-
-    }
-
-    func testThreadSafe() {
-        
-    }
-    
 }

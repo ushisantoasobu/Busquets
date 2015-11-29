@@ -8,25 +8,15 @@
 
 import Foundation
 
-public class Busquets {
+public class Busquets<T> {
 
     // MARK: - variables
 
-    private let capacity = 10 // TODO: be mutable in future!!
+    private let capacity = 10
 
-    private var caches :Array<Cache> = []
-//    private var caches = Dictionary<String, AnyObject>()
+    private var caches :Array<Cache<T>> = []
 
     private let lock = NSLock()
-
-    // MARK: - singleton
-
-    public class var sharedInstance : Busquets {
-        struct Static {
-            static let instance : Busquets = Busquets()
-        }
-        return Static.instance
-    }
 
     // MARK: - private
 
@@ -49,36 +39,27 @@ public class Busquets {
         self.caches.insert(cache, atIndex: 0)
     }
 
-    private func updateCacheIndex(index :Int) {
-        //
-    }
-
-    // MARK: - public
-
-    public func get(key :String) -> AnyObject? {
-        return self.get(key, update: true)
-    }
-
-    public func get<T>(key :String, _ type :T.Type) -> T? {
-        return self.get(key, update: true) as? T
-    }
-
-    public func get(key :String, update :Bool) -> AnyObject? {
-        var caches :Array<Cache>? = nil
-        caches = self.caches.filter { (cache :Cache) -> Bool in
+    private func get(key :String, update :Bool) -> T? {
+        var caches :Array<Cache<T>>? = nil
+        caches = self.caches.filter { (cache :Cache<T>) -> Bool in
             key == cache.key
         }
         if caches != nil && caches!.count > 0 {
             if update {
                 self.updateCacheIndex(caches![0].key)
             }
-            print("cache hit!!!")
             return caches![0].value
         }
         return nil
     }
 
-    public func set(key :String, value :AnyObject) -> Bool {
+    // MARK: - public
+
+    public func get(key :String) -> T? {
+        return self.get(key, update: true)
+    }
+
+    public func set(key :String, value :T) -> Bool {
         // validate key
         if key.characters.count == 0 {
             return false
@@ -117,15 +98,15 @@ public class Busquets {
 
     public func getKeys() -> Array<String> {
         var keys = Array<String>()
-        keys = self.caches.map { (cache :Cache) -> String in
+        keys = self.caches.map { (cache :Cache<T>) -> String in
             return cache.key
         }
         return keys
     }
 
-    public func getValues() -> Array<AnyObject> {
-        var values = Array<AnyObject>()
-        values = self.caches.map { (cache :Cache) -> AnyObject in
+    public func getValues() -> Array<T> {
+        var values = Array<T>()
+        values = self.caches.map { (cache :Cache<T>) -> T in
             return cache.value
         }
         return values
@@ -145,11 +126,11 @@ public class Busquets {
     }
 }
 
-class Cache {
+class Cache<T> {
     var key :String = ""
-    var value :AnyObject = ""
+    var value :T
 
-    init(key :String, value :AnyObject) {
+    init(key :String, value :T) {
         self.key = key
         self.value = value
     }
