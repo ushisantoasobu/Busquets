@@ -112,7 +112,15 @@ class BusquetsTests: XCTestCase {
     func testPerformanceExample() {
         // This is an example of a performance test case.
         self.measureBlock {
-            // Put the code you want to measure the time of here.
+            let cache = Busquets<String>()
+            var string = ""
+            for _ in 1...100000 {
+                cache.set("hoge", value: "hoge")
+                cache.set("fuga", value: "fuga")
+                string = cache.get("hoge")!
+                string = cache.get("fuga")!
+            }
+            print(string)
         }
     }
 
