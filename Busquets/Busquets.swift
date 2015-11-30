@@ -12,7 +12,7 @@ public class Busquets<T> {
 
     // MARK: - variables
 
-    private let capacity = 10
+    private final let capacity = 10
 
     private var caches :Array<Cache<T>> = []
 
@@ -34,21 +34,23 @@ public class Busquets<T> {
         if index == nil {
             return
         }
-        let cache = self.caches[index!]
-        self.caches.removeAtIndex(index!)
+        self.updateCacheIndex(index!)
+    }
+
+    private func updateCacheIndex(index :Int) {
+        let cache = self.caches[index]
+        self.caches.removeAtIndex(index)
         self.caches.insert(cache, atIndex: 0)
     }
 
     private func get(key :String, update :Bool) -> T? {
-        var caches :Array<Cache<T>>? = nil
-        caches = self.caches.filter { (cache :Cache<T>) -> Bool in
-            key == cache.key
-        }
-        if caches != nil && caches!.count > 0 {
-            if update {
-                self.updateCacheIndex(caches![0].key)
+        for (index, cache) in self.caches.enumerate() {
+            if key == cache.key {
+                if update {
+                    self.updateCacheIndex(index)
+                }
+                return cache.value
             }
-            return caches![0].value
         }
         return nil
     }
@@ -70,10 +72,9 @@ public class Busquets<T> {
         }
 
         self.lock.lock()
-
         // validate existing
-        if self.hasValue(key) == true {
-            self.updateCacheIndex(key)
+        if let index = self.getIndex(key) {
+            self.updateCacheIndex(index)
             self.lock.unlock()
             return true
         }
@@ -117,7 +118,7 @@ public class Busquets<T> {
     }
 
     public func remove(key :String) {
-        self.caches.enumerate().map { (index :Int, cache :Cache) -> Void in
+        for (index, cache) in self.caches.enumerate() {
             if key == cache.key {
                 self.caches.removeAtIndex(index)
                 return
@@ -126,7 +127,7 @@ public class Busquets<T> {
     }
 
     public func removeAll() {
-        self.caches.removeAll(keepCapacity: true) // TODO: keepCapacity
+        self.caches.removeAll(keepCapacity: false)
     }
 }
 
