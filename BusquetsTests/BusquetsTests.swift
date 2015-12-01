@@ -57,14 +57,14 @@ class BusquetsTests: XCTestCase {
         let cache = Busquets<Int>()
         cache.set("hoge", value: 100)
         cache.set("fuga", value: 200000)
-        XCTAssert(cache.getKeys() == ["fuga", "hoge"], "getKeys func works fine")
+        XCTAssert(cache.getKeys() == ["hoge", "fuga"], "getKeys func works fine")
     }
 
     func testGetValues() {
         let cache = Busquets<Int>()
         cache.set("hoge", value: 100)
         cache.set("fuga", value: 200000)
-        XCTAssert(cache.getValues() == [200000, 100], "getValues func works fine")
+        XCTAssert(cache.getValues() == [100, 200000], "getValues func works fine")
     }
 
     func testRemove() {

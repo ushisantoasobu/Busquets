@@ -14,45 +14,33 @@ public class Busquets<T> {
 
     private final let capacity = 10
 
-    private var caches :Array<Cache<T>> = []
+    private var caches = Dictionary<String, Cache<T>>()
 
     private let lock = NSLock()
 
     // MARK: - private
 
-    private func getIndex(key :String) -> Int? {
-        for (index, cache) in self.caches.enumerate() {
-            if cache.key == key {
-                return index
+    private func removeLastIndex() {
+        for (key, value) in self.caches {
+            if value.index == 10 {
+                self.caches.removeValueForKey(key)
+                return
             }
         }
-        return nil
     }
 
-    private func updateCacheIndex(key :String) {
-        let index = self.getIndex(key)
-        if index == nil {
+    private func updateIndex(key :String) {
+        let targetCache = self.caches[key]
+        if targetCache == nil {
             return
         }
-        self.updateCacheIndex(index!)
-    }
-
-    private func updateCacheIndex(index :Int) {
-        let cache = self.caches[index]
-        self.caches.removeAtIndex(index)
-        self.caches.insert(cache, atIndex: 0)
-    }
-
-    private func get(key :String, update :Bool) -> T? {
-        for (index, cache) in self.caches.enumerate() {
-            if key == cache.key {
-                if update {
-                    self.updateCacheIndex(index)
-                }
-                return cache.value
+        let targetIndex = targetCache?.index
+        for (akey, value) in self.caches {
+            if value.index < targetIndex {
+                self.caches[akey]?.index++
             }
         }
-        return nil
+        targetCache?.index = 1
     }
 
     // MARK: - public
@@ -62,7 +50,8 @@ public class Busquets<T> {
     }
 
     public func get(key :String) -> T? {
-        return self.get(key, update: true)
+        self.updateIndex(key)
+        return self.caches[key]?.value
     }
 
     public func set(key :String, value :T) -> Bool {
@@ -73,24 +62,32 @@ public class Busquets<T> {
 
         self.lock.lock()
         // validate existing
-        if let index = self.getIndex(key) {
-            self.updateCacheIndex(index)
+        if self.caches[key] != nil {
+            self.updateIndex(key)
             self.lock.unlock()
             return true
         }
 
-        let cache = Cache(key: key, value: value)
+        let count = self.caches.count
 
-        if self.caches.count == 10 {
-            self.caches.removeLast()
+        let cache = Cache(value: value)
+        cache.index = 1
+
+        if count == 10 {
+            self.removeLastIndex()
         }
-        self.caches.insert(cache, atIndex: 0)
+
+        for (_, value) in self.caches {
+            value.index++
+        }
+
+        self.caches[key] = cache
         self.lock.unlock()
         return true
     }
 
     public func hasValue(key :String) -> Bool {
-        return (self.get(key, update :false) != nil)
+        return (self.caches[key] != nil)
     }
 
     public func getCapacity() -> Int {
@@ -103,27 +100,31 @@ public class Busquets<T> {
 
     public func getKeys() -> Array<String> {
         var keys = Array<String>()
-        keys = self.caches.map { (cache :Cache<T>) -> String in
-            return cache.key
+        keys = self.caches.map { (key :String, _ :Cache<T>) -> String in
+            return key
         }
         return keys
     }
 
     public func getValues() -> Array<T> {
         var values = Array<T>()
-        values = self.caches.map { (cache :Cache<T>) -> T in
+        values = self.caches.map { (_, cache :Cache<T>) -> T in
             return cache.value
         }
         return values
     }
 
     public func remove(key :String) {
-        for (index, cache) in self.caches.enumerate() {
-            if key == cache.key {
-                self.caches.removeAtIndex(index)
-                return
+        if self.caches[key] == nil {
+            return
+        }
+        let targetIndex = self.caches[key]?.index
+        for (key, value) in self.caches {
+            if value.index > targetIndex {
+                self.caches[key]?.index--
             }
         }
+        self.caches.removeValueForKey(key)
     }
 
     public func removeAll() {
@@ -132,11 +133,10 @@ public class Busquets<T> {
 }
 
 class Cache<T> {
-    var key :String = ""
     var value :T
+    var index = 0
 
-    init(key :String, value :T) {
-        self.key = key
+    init(value :T) {
         self.value = value
     }
 }
