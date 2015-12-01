@@ -18,14 +18,23 @@ it, simply add the following line to your Podfile:
 pod "Busquets"
 ```
 
+## Requirements
+
+- iOS 9.X (iOS 8.X is not tested yet)
+- Swift 2.0
+
 ## Usage
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
 ```Swift
-let cache = Busquets<String>()
-cache.set("nickname", value: "ushisantoasobu")
-print(cache.get("nickname"))
+let stringCache = Busquets<String>()
+stringCache.set("nickname", value: "ushisantoasobu")
+print(stringCache.get("nickname"))
+
+let intCache = Busquets<Int>()
+intCache.set("age", value: 31)
+print(intCache.get("age"))
 ```
 
 ### get
