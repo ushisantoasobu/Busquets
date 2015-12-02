@@ -67,7 +67,7 @@ public class Busquets<T> {
 
     public func set(key :String, value :T) -> Bool {
         // validate key
-        if key.characters.count == 0 {
+        if key.isEmpty {
             return false
         }
 
@@ -81,7 +81,7 @@ public class Busquets<T> {
 
         let cache = Cache(key: key, value: value)
 
-        if self.caches.count == 10 {
+        if self.caches.count == self.capacity {
             self.caches.removeLast()
         }
         self.caches.insert(cache, atIndex: 0)
