@@ -30,14 +30,6 @@ public class Busquets<T> {
         return nil
     }
 
-    private func updateCacheIndex(key :String) {
-        let index = self.getIndex(key)
-        if index == nil {
-            return
-        }
-        self.updateCacheIndex(index!)
-    }
-
     private func updateCacheIndex(index :Int) {
         let cache = self.caches[index]
         self.caches.removeAtIndex(index)
