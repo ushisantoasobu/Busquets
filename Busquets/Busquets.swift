@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 public class Busquets<T> {
 
@@ -55,10 +56,19 @@ public class Busquets<T> {
         return nil
     }
 
+    @objc private func clearMemoryCache() {
+        self.removeAll()
+    }
+
     // MARK: - public
 
     public init() {
-        //
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "clearMemoryCache",
+            name: UIApplicationDidReceiveMemoryWarningNotification, object: nil)
+    }
+
+    deinit {
+        NSNotificationCenter.defaultCenter().removeObserver(self)
     }
 
     public func get(key :String) -> T? {
