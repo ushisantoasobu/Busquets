@@ -19,6 +19,8 @@ public class Busquets<T> {
 
     private let lock = NSLock()
 
+    public var hitLogFlg = false
+
     // MARK: - private
 
     private func getIndex(key :String) -> Int? {
@@ -41,6 +43,9 @@ public class Busquets<T> {
             if key == cache.key {
                 if update {
                     self.updateCacheIndex(index)
+                }
+                if self.hitLogFlg {
+                    NSLog("[Busquets cache hit] key = %@", key)
                 }
                 return cache.value
             }
